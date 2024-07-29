@@ -1,9 +1,14 @@
 import { useForm } from "react-hook-form";
 import { useUserSignUpMutation } from "../redux/apiClient/userApi";
 import { toast } from "sonner";
+import Spinner from "../components/Spinner";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { useState } from "react";
 
 const Signup = () => {
-  const [signUp] = useUserSignUpMutation();
+  const [signUp, { isLoading }] = useUserSignUpMutation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -15,7 +20,6 @@ const Signup = () => {
   // Signup form submit handler--
   const formSubmitHandler = handleSubmit(async (data) => {
     const file = data.avatar[0];
-    console.log(file);
 
     const formData = new FormData();
     formData.set("username", data.username);
@@ -69,7 +73,7 @@ const Signup = () => {
               {...register("username", { required: "Username is required" })}
             />
             {errors.username && (
-              <span className="text-[10px] text-[red] font-primary my-2">
+              <span className="text-[12px] text-[tomato] font-primary my-2">
                 {errors.username.message}*
               </span>
             )}
@@ -86,11 +90,11 @@ const Signup = () => {
               type="email"
               id="email"
               placeholder="Enter your email"
-              className="w-full rounded-md px-[20px] h-[45px] font-primary"
+              className="w-full rounded-md px-[20px] h-[45px] font-primary outline-none"
               {...register("email", { required: "Email is required" })}
             />
             {errors.email && (
-              <span className="text-[10px] text-[red] font-primary my-2">
+              <span className="text-[12px] text-[tomato] font-primary my-2">
                 {errors.email.message}*
               </span>
             )}
@@ -103,15 +107,30 @@ const Signup = () => {
             >
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Enter your password"
-              className="w-full rounded-md px-[20px] h-[45px] font-primary"
-              {...register("password", { required: "Password is required" })}
-            />
+            <div className="flex w-full rounded-md px-[20px] h-[45px] bg-[white] items-center ">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Enter your password"
+                className="flex-1 w-full h-full outline-none font-primary "
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
+                  },
+                })}
+              />
+              <span
+                className="ml-2 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {!showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+              </span>
+            </div>
+
             {errors.password && (
-              <span className="text-[10px] text-[red] font-primary my-2">
+              <span className="text-[12px] text-[tomato] font-primary my-2">
                 {errors.password.message}*
               </span>
             )}
@@ -133,7 +152,7 @@ const Signup = () => {
               {...register("avatar", { required: "Avatar is required" })}
             />
             {errors.avatar && (
-              <span className="text-[10px] text-[red] font-primary my-2">
+              <span className="text-[12px] text-[tomato] font-primary my-2">
                 {errors.avatar.message}*
               </span>
             )}
@@ -142,7 +161,7 @@ const Signup = () => {
             type="submit"
             className="text-center bg-[black] text-[white] font-primary h-[45px] px-[10px] rounded-md w-full my-[10px] hover:opacity-[.5] duration-300 transition-all"
           >
-            Submit
+            {isLoading ? <Spinner size={25} /> : "Submit"}
           </button>
         </form>
       </div>

@@ -26,6 +26,7 @@ export const userApi = createApi({
           "Content-Type": "application/json",
         },
         body: JSON.stringify(bodyData),
+        credentials: "include",
       }),
     }),
     userSignUp: builder.mutation({
@@ -33,6 +34,7 @@ export const userApi = createApi({
         url: "/user/sign-up",
         method: "POST",
         body: bodyData,
+        credentials: "include",
       }),
     }),
   }),
